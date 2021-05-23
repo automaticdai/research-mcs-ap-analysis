@@ -15,15 +15,13 @@ logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 ########################################################################################################################
 # Parameters
 ########################################################################################################################
-number_of_tasks = 6
+number_of_tasks = 5
 number_of_hi_tasks = math.ceil(number_of_tasks / 2)
-hyperperiod = 10000
-periods = [250, 500, 1000, 2000, 5000, 10000]
-target_util = 0.9
+periods = [250, 500, 1000, 2000, 5000, 10000]   # hyperperiod = 10000
 
-C_low_Mi = 0.8
-C_high_multiplier = 2
-gamma = 0.8
+C_low_Mi = 0.7
+C_high_multiplier = 3
+
 number_of_trials = 10000
 
 
@@ -158,7 +156,7 @@ def rta_high(i, taskset):
 # Trial
 ########################################################################################################################
 
-def trial():
+def trial(target_util, gamma):
     taskset = []
     taskidx = []
     taskidx_high = []
@@ -281,14 +279,17 @@ def trial():
 ########################################################################################################################
 # Main starts here
 ########################################################################################################################
-count = 0
-count_low = 0
-count_low_all = 0
+for util_this in [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9]:
+    for gamma_this in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]:
+        target_util = util_this
+        count = 0
+        count_low = 0
+        count_low_all = 0
 
-for k in range(number_of_trials):
-    ret, low_count, low_all = trial()
-    if ret:
-        count += 1
-    count_low += low_count
-    count_low_all += low_all
-print(count, count_low, count_low_all)
+        for k in range(number_of_trials):
+            ret, low_count, low_all = trial(util_this, gamma_this)
+            if ret:
+                count += 1
+            count_low += low_count
+            count_low_all += low_all
+        print(util_this, gamma_this, count, count_low, count_low_all)
