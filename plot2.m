@@ -10,3 +10,6 @@ xlabel('Σ Util');
 ylabel('Schedulability');
 
 legend(["without MID mode","with MID mode"])
+
+grid on
+

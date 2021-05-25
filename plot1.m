@@ -7,8 +7,10 @@ Z = reshape(Z_1d, 9, 9);
 Z = Z' ./ trials_num;
 
 s = surf(X,Y,Z);
-xlabel('\gamma');
+xlabel('\bf \gamma');
 ylabel('Σ Util');
 zlabel('\Delta S');
 
 colorbar
+
+view(90,90)
