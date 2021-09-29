@@ -1,3 +1,9 @@
 # mcs-ap-analysis
 
-This is the schedulability analysis of the paper, Zhe Jiang, Xiaotian Dai, Neil Audsley. "HIART-MCS: High Resilience and Approximated Computing Architecture for Imprecise Mixed-Criticality Systems". RTSS 2021
+This is the code of the schedulability analysis of RTSS 2021 paper, "HIART-MCS: High Resilience and Approximated Computing Architecture for Imprecise Mixed-Criticality Systems". 
+
+To cite:
+
+```
+Zhe Jiang, Xiaotian Dai, Neil Audsley. "HIART-MCS: High Resilience and Approximated Computing Architecture for Imprecise Mixed-Criticality Systems". Real Time Systems Symposium (RTSS). 2021
+```
