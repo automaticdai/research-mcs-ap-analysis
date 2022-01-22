@@ -9,6 +9,7 @@ import math
 import random
 import pprint
 import logging, sys
+
 logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 #logging.debug()
 #logging.info()
@@ -25,7 +26,6 @@ C_high_multiplier = 3
 
 number_of_trials = 10000
 
-
 ################################################################################
 # Variables
 ################################################################################
@@ -36,7 +36,6 @@ taskset = []
 taskidx = []
 taskidx_high = []
 taskidx_low = []
-
 
 ################################################################################
 # Functions
@@ -51,7 +50,6 @@ def UUniFast(n, U_avg):
         sumU = nextSumU
     USet.append(sumU)
     return USet
-
 
 
 # check low RTA
@@ -82,7 +80,6 @@ def rta_low(i, taskset):
     return Ri
 
 
-
 # check low -> mid
 def rta_low_to_mid(i, taskset):
     Ri_LO = rta_low(i, taskset)
@@ -107,7 +104,7 @@ def rta_low_to_mid(i, taskset):
                 Cj_mid = taskset[j]["C_mid"]
                 Cj_low = taskset[j]["C_low"]
                 Tj = taskset[j]["T_i"]
-                Ij += math.ceil(Ri_LO / Tj) * Cj_low + math.ceil((Ri - Ri_LO) / Tj) * Cj_mid
+                Ij += math.ceil(Ri_LO / Tj) * Cj_low + (math.ceil(Ri / Tj) - math.ceil(Ri_LO / Tj)) * Cj_mid
             elif j < i and typej == 1:  # j = hpH(i)
                 Cj_mid = taskset[j]["C_mid"]
                 Tj = taskset[j]["T_i"]
@@ -119,7 +116,6 @@ def rta_low_to_mid(i, taskset):
             break
 
     return Ri
-
 
 
 # check mid RTA
@@ -155,10 +151,10 @@ def rta_mid(i, taskset):
     return Ri
 
 
-
 # check mid -> high
 def rta_mid_to_high(i, taskset):
-    Ri_MI = rta_low(i, taskset)
+    Ri_MI = rta_mid(i, taskset)
+    Ri_LO = rta_low(i, taskset)
 
     Ci = taskset[i]["C_low"]
     Ci_mid = taskset[i]["C_mid"]
@@ -177,9 +173,10 @@ def rta_mid_to_high(i, taskset):
         for j in taskidx:
             typej = taskset[j]["Type"]
             if j < i and typej == 0:  # j = hpL(i)
+                Cj_low = taskset[j]["C_low"]
                 Cj_mid = taskset[j]["C_mid"]
                 Tj = taskset[j]["T_i"]
-                Ij += math.ceil(Ri_MI / Tj) * Cj_mid
+                Ij += math.ceil(Ri_LO / Tj) * Cj_low + (math.ceil(Ri_MI / Tj) - math.ceil(Ri_LO / Tj)) * Cj_mid
             elif j < i and typej == 1:  # j = hpH(i)
                 Cj_high = taskset[j]["C_high"]
                 Tj = taskset[j]["T_i"]
@@ -191,7 +188,6 @@ def rta_mid_to_high(i, taskset):
             break
 
     return Ri
-
 
 
 # check high RTA
@@ -224,10 +220,10 @@ def rta_high(i, taskset):
 
     return Ri
 
+
 ################################################################################
 # Trial
 ################################################################################
-
 def trial(target_util, gamma):
     taskset = []
     taskidx = []
@@ -282,18 +278,15 @@ def trial(target_util, gamma):
             #print("Error #1.")
             pass
 
-
     # calculate C_i^MD based on gamma
     for i in taskidx_high:
         taskset[i]["C_mid"] = taskset[i]["C_low"] + math.ceil((taskset[i]["C_high"] - taskset[i]["C_low"]) * gamma)
 
     #pprint.pprint(taskset)
 
-
     # select and overrun one of the HI tasks
     overrun_task_idx = random.choice(taskidx_high)
     #print("Overrun idx: ", overrun_task_idx)
-
 
     # check schedulability of HI or AP
     overrun_Ci_low = taskset[overrun_task_idx]["C_low"]
@@ -346,7 +339,6 @@ def trial(target_util, gamma):
     #print(method1_feasible, method2_feasible)
 
     return (not method1_feasible and method2_feasible, low_count, low_all)
-
 
 
 def trial_searching(target_util):
@@ -403,7 +395,6 @@ def trial_searching(target_util):
             #print("Error #1.")
             pass
 
-
     # --------------------------------------------------------------------------------------------
     # searching
     # --------------------------------------------------------------------------------------------
@@ -449,16 +440,12 @@ def trial_searching(target_util):
         else:
             R = M
 
-
     # --------------------------------------------------------------------------------------------
-
     #pprint.pprint(taskset)
-
 
     # select and overrun one of the HI tasks
     overrun_task_idx = random.choice(taskidx_high)
     #print("Overrun idx: ", overrun_task_idx)
-
 
     # check schedulability of HI or AP
     overrun_Ci_low = taskset[overrun_task_idx]["C_low"]
@@ -509,7 +496,6 @@ def trial_searching(target_util):
         low_count = 0
 
     #print(method1_feasible, method2_feasible)
-
 
     return (method1_feasible, method2_feasible, low_count, low_all, gamma)
 
