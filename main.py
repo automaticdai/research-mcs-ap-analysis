@@ -328,7 +328,6 @@ def trial_searching(taskset_, taskidx, taskidx_high, taskidx_low, search_gamma=T
         # while gamma_this < 1:
         #     gamma_set.append(gamma_this)
         #     gamma_this += step
-
         gamma_set = [x * 0.01 for x in range(1, 100)]
 
         # calculate C_i^MD based on gamma
